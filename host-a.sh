@@ -1,0 +1,17 @@
+export DEBIAN_FRONTEND=noninteractive
+
+#Startup commands go here
+sudo ip addr add 192.168.0.2/23 dev enp0s8
+#Download package information from all configured sources
+sudo apt-get update
+#Install and run Docker.io
+sudo apt -y install docker.io
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo docker pull dustnic82/nginx-test
+sudo docker run --name nginx -p 80:80 -d dustnic82/nginx-test
+#Network interface config
+sudo ip link set dev enp0s8 up
+#Defaul gateway set up
+sudo ip route add 192.168.0.0/22 via 192.168.0.1
+sudo tc qdisc add dev enp0s8 root tbf rate 1mbit burst 32kbit latency 400ms
